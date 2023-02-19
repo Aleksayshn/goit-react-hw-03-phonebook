@@ -1,4 +1,4 @@
-import React from 'react';
+import { Component } from 'react';
 import { nanoid } from 'nanoid';
 import {
   Container,
@@ -8,17 +8,27 @@ import {
   Notification,
 } from 'components';
 import { Title } from './App.styled';
+// import contacts from '../../contacts.json';
 
-export class App extends React.Component {
+
+export class App extends Component {
   state = {
-    contacts: [
-      { id: 'id-1', name: 'Alice Johnson', number: '555-1234' },
-      { id: 'id-2', name: 'Bob Smith', number: '555-5678' },
-      { id: 'id-3', name: 'Charlie Brown', number: '555-9012' },
-      { id: 'id-4', name: 'David Lee', number: '555-3456' },
-    ],
+    contacts: [],
     filter: '',
   };
+  componentDidMount() {
+    const savedContacts = JSON.parse(localStorage.getItem('contacts'));
+    if (savedContacts) {
+      this.setState({ contacts: savedContacts });
+    }
+  }
+
+  componentDidUpdate(_, prevState) {
+    const { contacts } = this.state;
+    if (prevState.contacts !== contacts) {
+      localStorage.setItem('contacts', JSON.stringify(contacts));
+    }
+  }
 
   addContact = ({ name, number }) => {
     const { contacts } = this.state;
@@ -28,7 +38,7 @@ export class App extends React.Component {
 
     if (isContactExists) {
       alert(`Contact ${name} already exists!`);
-      return false;
+      return;
     }
 
     const contact = {
@@ -39,7 +49,6 @@ export class App extends React.Component {
     this.setState(({ contacts }) => ({
       contacts: [contact, ...contacts],
     }));
-    return true;
   };
 
   deleteContact = contactId => {
@@ -69,7 +78,7 @@ export class App extends React.Component {
         <ContactForm onSubmit={this.addContact} />
         <Title>Contacts</Title>
         {contacts.length !== 0 && (
-          <Filter filter={filter} onFilterChange={this.filterChange} />
+          <Filter value={filter} onFilterChange={this.filterChange} />
         )}
         {filteredContacts.length !== 0 && (
           <ContactList
