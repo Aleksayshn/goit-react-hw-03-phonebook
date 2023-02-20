@@ -23,12 +23,12 @@ export class App extends Component {
     }
   }
 
-  componentDidUpdate(_, prevState) {
-    const { contacts } = this.state;
-    if (prevState.contacts !== contacts) {
-      localStorage.setItem('contacts', JSON.stringify(contacts));
-    }
+componentDidUpdate(_, prevState) {
+  const { contacts } = this.state;
+  if (prevState.contacts.length !== contacts.length) {
+    localStorage.setItem('contacts', JSON.stringify(contacts));
   }
+}
 
   addContact = ({ name, number }) => {
     const { contacts } = this.state;
